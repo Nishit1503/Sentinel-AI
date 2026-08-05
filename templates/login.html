@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sentinel AI - Secure Portal Login</title>
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/login.css') }}">
+</head>
+
+<body>
+
+    <div class="login-wrapper">
+        
+        <!-- LEFT PANEL: Brand Presentation & Compact Features -->
+        <section class="brand-panel">
+            <div class="brand-bg-glow"></div>
+            
+            <div class="brand-content">
+                <!-- Brand Header -->
+                <div class="brand-header">
+                    <div class="brand-logo">
+                        <i data-lucide="shield-check"></i>
+                    </div>
+                    <div>
+                        <h1>Sentinel AI</h1>
+                        <p class="subtitle">Intelligent Security & Threat Telemetry Platform</p>
+                    </div>
+                </div>
+
+                <!-- Tagline Hero -->
+                <div class="hero-tagline">
+                    <h2>Real-time Threat Monitoring & Telemetry Console</h2>
+                    <p>Continuous AI-driven security auditing for processes, network sockets, and file integrity.</p>
+                </div>
+
+                <!-- 4 Compact Feature Cards -->
+                <div class="feature-grid">
+                    <div class="compact-feature">
+                        <div class="feature-icon blue">
+                            <i data-lucide="cpu"></i>
+                        </div>
+                        <div class="feature-info">
+                            <h4>Process Telemetry</h4>
+                            <p>Real-time PID inspection</p>
+                        </div>
+                    </div>
+
+                    <div class="compact-feature">
+                        <div class="feature-icon green">
+                            <i data-lucide="network"></i>
+                        </div>
+                        <div class="feature-info">
+                            <h4>Network Watcher</h4>
+                            <p>Active socket tracking</p>
+                        </div>
+                    </div>
+
+                    <div class="compact-feature">
+                        <div class="feature-icon red">
+                            <i data-lucide="shield-alert"></i>
+                        </div>
+                        <div class="feature-info">
+                            <h4>Threat Engine</h4>
+                            <p>Heuristic threat scoring</p>
+                        </div>
+                    </div>
+
+                    <div class="compact-feature">
+                        <div class="feature-icon purple">
+                            <i data-lucide="folder-search"></i>
+                        </div>
+                        <div class="feature-info">
+                            <h4>File Integrity</h4>
+                            <p>Directory change auditor</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Footer Version Badge -->
+                <div class="brand-footer">
+                    <span class="version-pill">
+                        <span class="pulse-dot"></span>
+                        v1.0.4 Enterprise Build
+                    </span>
+                    <span class="copyright">© 2026 Sentinel AI Inc.</span>
+                </div>
+            </div>
+        </section>
+
+        <!-- RIGHT PANEL: Authentication Form Console -->
+        <section class="login-panel">
+            <div class="login-card">
+                
+                <div class="card-header">
+                    <span class="badge-auth">
+                        <i data-lucide="lock"></i>
+                        SECURE AUTHENTICATION
+                    </span>
+                    <h2>Welcome Back</h2>
+                    <p>Sign in with your enterprise credentials to access the console</p>
+                </div>
+
+                <!-- Alert Message Container -->
+                <div id="login-alert" class="alert-box {% if error %}show{% endif %}">
+                    <i data-lucide="alert-circle" class="alert-icon"></i>
+                    <span id="alert-message">{{ error or '' }}</span>
+                </div>
+
+                <!-- Login Form -->
+                <form id="login-form" method="POST" action="/login" class="login-form">
+                    
+                    <!-- Username Field -->
+                    <div class="input-group">
+                        <label for="username">Username</label>
+                        <div class="input-box">
+                            <i data-lucide="user" class="field-icon"></i>
+                            <input 
+                                type="text" 
+                                id="username" 
+                                name="username" 
+                                placeholder="Enter your username" 
+                                autocomplete="username" 
+                                required
+                            >
+                        </div>
+                    </div>
+
+                    <!-- Password Field -->
+                    <div class="input-group">
+                        <label for="password">Password</label>
+                        <div class="input-box">
+                            <i data-lucide="key-round" class="field-icon"></i>
+                            <input 
+                                type="password" 
+                                id="password" 
+                                name="password" 
+                                placeholder="Enter your password" 
+                                autocomplete="current-password" 
+                                required
+                            >
+                            <button type="button" id="toggle-password" class="toggle-password-btn" title="Toggle password visibility">
+                                <i data-lucide="eye" id="toggle-icon"></i>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Form Options (Remember Me & Forgot Password) -->
+                    <div class="form-options">
+                        <label class="remember-label">
+                            <input type="checkbox" id="remember" name="remember" class="custom-checkbox">
+                            <span class="checkbox-custom"></span>
+                            <span>Remember session</span>
+                        </label>
+
+                        <a href="#" id="forgot-password-link" class="forgot-link" onclick="handleForgotPassword(event)">Forgot password?</a>
+                    </div>
+
+                    <!-- Submit Sign In Button -->
+                    <button type="submit" id="login-btn" class="login-btn">
+                        <span id="btn-text">Sign In</span>
+                        <i data-lucide="arrow-right" id="btn-icon"></i>
+                        <i data-lucide="loader-2" id="btn-spinner" class="spin-icon hidden"></i>
+                    </button>
+                </form>
+
+                <!-- Platform Telemetry Status Bar -->
+                <div class="status-section">
+                    <div class="status-item">
+                        <span>Platform Status</span>
+                        <strong class="text-green">
+                            <span class="mini-dot green"></span> Online
+                        </strong>
+                    </div>
+
+                    <div class="status-item">
+                        <span>Monitoring</span>
+                        <strong class="text-green">
+                            <span class="mini-dot green"></span> Active
+                        </strong>
+                    </div>
+
+                    <div class="status-item">
+                        <span>Threat Engine</span>
+                        <strong class="text-blue">
+                            <span class="mini-dot blue"></span> Ready
+                        </strong>
+                    </div>
+                </div>
+
+            </div>
+        </section>
+
+    </div>
+
+    <!-- Toast Notifications Container -->
+    <div id="toast-container"></div>
+
+    <!-- Custom JS -->
+    <script src="{{ url_for('static', filename='js/login.js') }}"></script>
+
+    <script>
+    window.addEventListener("load", () => {
+        if (window.lucide) {
+            lucide.createIcons();
+        }
+    });
+
+    function handleForgotPassword(e) {
+        e.preventDefault();
+        alert("For security policies, password resets must be initiated by your Administrator (Default Admin: admin / admin123).");
+    }
+    </script>
+</body>
+</html>

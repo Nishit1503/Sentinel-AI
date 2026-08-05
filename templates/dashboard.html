@@ -1,0 +1,831 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sentinel AI - Intelligent Security Platform</title>
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap"
+        rel="stylesheet">
+
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/dashboard.css') }}">
+</head>
+
+<body>
+
+    <!-- Loading Screen -->
+    <div id="loading-screen">
+        <div class="loader-card">
+            <div class="shield-icon">🛡️</div>
+            <h1>Sentinel AI</h1>
+            <p id="loading-text">Initializing Security Platform...</p>
+            <div class="progress-bar">
+                <div id="progress-fill"></div>
+            </div>
+            <span id="progress-percent">0%</span>
+            <small>Version 1.0.0</small>
+        </div>
+    </div>
+
+    <!-- App Shell Container -->
+    <div class="app-shell">
+
+        <!-- Sidebar Navigation -->
+        <aside class="sidebar">
+            <div class="sidebar-top">
+                <div class="brand">
+                    <div class="brand-logo">
+                        <i data-lucide="shield-check"></i>
+                    </div>
+                    <div class="brand-info">
+                        <h2>Sentinel AI</h2>
+                        <p>Security Platform</p>
+                    </div>
+                </div>
+
+                <nav class="nav">
+                    <a href="#overview" class="nav-link active">
+                        <i data-lucide="layout-dashboard"></i>
+                        <span>Dashboard</span>
+                    </a>
+
+                    <a href="#processes" class="nav-link">
+                        <i data-lucide="cpu"></i>
+                        <span>Processes</span>
+                    </a>
+
+                    <a href="#network" class="nav-link">
+                        <i data-lucide="network"></i>
+                        <span>Network</span>
+                    </a>
+
+                    <a href="#file-scanner" class="nav-link">
+                        <i data-lucide="folder-search"></i>
+                        <span>File Scanner</span>
+                    </a>
+
+                    <a href="#alerts" class="nav-link">
+                        <i data-lucide="activity"></i>
+                        <span>Live Events</span>
+                    </a>
+
+                    <a href="#analytics" class="nav-link">
+                        <i data-lucide="chart-column"></i>
+                        <span>Analytics</span>
+                    </a>
+
+                    <a href="#settings" class="nav-link">
+                        <i data-lucide="settings"></i>
+                        <span>Settings</span>
+                    </a>
+                </nav>
+            </div>
+
+            <div class="sidebar-bottom">
+                <div class="system-status-indicator">
+                    <span class="status-dot online"></span>
+                    <span class="status-label">Engine Active</span>
+                </div>
+                <a href="/logout" class="logout">
+                    <i data-lucide="log-out"></i>
+                    <span>Logout</span>
+                </a>
+            </div>
+        </aside>
+
+        <!-- Main Content View Area -->
+        <main class="content">
+
+            <!-- Global Top Bar -->
+            <header class="topbar">
+                <div class="topbar-left">
+                    <h1 id="page-title">Dashboard</h1>
+                    <p class="subtitle" id="page-subtitle">Real-time Security Monitoring Overview</p>
+                </div>
+
+                <div class="topbar-center">
+                    <div class="search">
+                        <i data-lucide="search"></i>
+                        <input type="text" id="event-search" placeholder="Search alerts, processes, files, severity...">
+                    </div>
+                </div>
+
+                <div class="topbar-right">
+                    <div class="last-updated">
+                        <span>Last Updated</span>
+                        <strong id="current-time">--:--:--</strong>
+                    </div>
+
+                    <button class="refresh-btn" id="refresh-dashboard">
+                        <i data-lucide="refresh-cw"></i>
+                        <span>Refresh</span>
+                    </button>
+                </div>
+            </header>
+
+            <!-- =======================================================
+                 PAGE 1: DASHBOARD OVERVIEW PAGE
+            ======================================================== -->
+            <div id="overview" class="page-view active">
+
+                <!-- Welcome Banner -->
+                <div class="welcome-banner">
+                    <div class="banner-content">
+                        <h2>Welcome back, admin 👋</h2>
+                        <p>Sentinel AI is actively monitoring system processes, network connections, and file integrity.
+                        </p>
+                    </div>
+                    <div class="banner-badge">
+                        <span class="badge-status-dot"></span>
+                        <span>All Systems Operational</span>
+                    </div>
+                </div>
+
+                <!-- 4 Overview Summary Cards -->
+                <section class="overview">
+                    <div class="metric-card">
+                        <div class="metric-icon blue">
+                            <i data-lucide="cpu"></i>
+                        </div>
+                        <div class="metric-content">
+                            <span class="metric-title">Running Processes</span>
+                            <h2 id="running-count">--</h2>
+                            <small class="metric-status">Live Monitoring</small>
+                        </div>
+                    </div>
+
+                    <div class="metric-card">
+                        <div class="metric-icon green">
+                            <i data-lucide="network"></i>
+                        </div>
+                        <div class="metric-content">
+                            <span class="metric-title">Network Connections</span>
+                            <h2 id="network-connection-count">--</h2>
+                            <small class="metric-status">Active Sockets</small>
+                        </div>
+                    </div>
+
+                    <div class="metric-card">
+                        <div class="metric-icon red">
+                            <i data-lucide="shield-alert"></i>
+                        </div>
+                        <div class="metric-content">
+                            <span class="metric-title">Active Alerts</span>
+                            <h2 id="alert-count">--</h2>
+                            <small class="metric-status">Threat Detection</small>
+                        </div>
+                    </div>
+
+                    <div class="metric-card">
+                        <div class="metric-icon purple">
+                            <i data-lucide="shield-check"></i>
+                        </div>
+                        <div class="metric-content">
+                            <span class="metric-title">System Health</span>
+                            <h2 id="system-health">Healthy</h2>
+                            <small class="metric-status success">All Services Running</small>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Dashboard Grid Row: Main Chart & System Status -->
+                <div class="dashboard-grid">
+
+                    <!-- Main Overview Chart -->
+                    <section class="card chart-card">
+                        <div class="card-header">
+                            <div class="header-left">
+                                <div class="section-icon">
+                                    <i data-lucide="activity"></i>
+                                </div>
+                                <div>
+                                    <h3>Threat Activity Timeline</h3>
+                                    <p>Real-time threat detection telemetry graph</p>
+                                </div>
+                            </div>
+                            <div class="header-right">
+                                <span class="status-live">
+                                    <span class="live-dot"></span>
+                                    LIVE
+                                </span>
+                                <button class="refresh-btn" id="refresh-chart">
+                                    <i data-lucide="refresh-cw"></i>
+                                    Refresh
+                                </button>
+                            </div>
+                        </div>
+
+                        <div class="chart-wrapper">
+                            <canvas id="timelineChart"></canvas>
+                        </div>
+
+                        <div class="chart-footer">
+                            <div class="chart-stat">
+                                <span>Highest Score</span>
+                                <strong id="highest-score">--</strong>
+                            </div>
+                            <div class="chart-stat">
+                                <span>Average Score</span>
+                                <strong id="average-score">--</strong>
+                            </div>
+                            <div class="chart-stat">
+                                <span>Total Events</span>
+                                <strong id="total-events">--</strong>
+                            </div>
+                        </div>
+                    </section>
+
+                    <!-- Quick System Status Panel -->
+                    <section class="card system-status-card">
+                        <div class="card-header">
+                            <div class="header-left">
+                                <div class="section-icon">
+                                    <i data-lucide="server"></i>
+                                </div>
+                                <div>
+                                    <h3>Quick System Status</h3>
+                                    <p>Module telemetry & engine health</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="status-list">
+                            <div class="status-item">
+                                <div class="status-info">
+                                    <i data-lucide="cpu"></i>
+                                    <span>Process Monitor Engine</span>
+                                </div>
+                                <span class="status-tag active">Operational</span>
+                            </div>
+
+                            <div class="status-item">
+                                <div class="status-info">
+                                    <i data-lucide="network"></i>
+                                    <span>Network Socket Watcher</span>
+                                </div>
+                                <span class="status-tag active">Operational</span>
+                            </div>
+
+                            <div class="status-item">
+                                <div class="status-info">
+                                    <i data-lucide="folder-search"></i>
+                                    <span>File Integrity Monitor</span>
+                                </div>
+                                <span class="status-tag active">Watching</span>
+                            </div>
+
+                            <div class="status-item">
+                                <div class="status-info">
+                                    <i data-lucide="database"></i>
+                                    <span>SQLite Event Database</span>
+                                </div>
+                                <span class="status-tag active">Connected</span>
+                            </div>
+
+                            <div class="status-item">
+                                <div class="status-info">
+                                    <i data-lucide="shield-check"></i>
+                                    <span>Heuristic Threat Rules</span>
+                                </div>
+                                <span class="status-tag active">v1.0.4 Loaded</span>
+                            </div>
+                        </div>
+                    </section>
+                </div>
+
+                <!-- Recent Threat Alerts (Latest 5) -->
+                <section class="card alerts-card">
+                    <div class="card-header">
+                        <div class="header-left">
+                            <div class="section-icon">
+                                <i data-lucide="shield-alert"></i>
+                            </div>
+                            <div>
+                                <h3>Recent Threat Alerts</h3>
+                                <p>Latest detections recorded by the threat engine</p>
+                            </div>
+                        </div>
+                        <div class="header-right">
+                            <span class="status-live">
+                                <span class="live-dot"></span>
+                                LIVE
+                            </span>
+                        </div>
+                    </div>
+
+                    <div class="table-container">
+                        <table class="alerts-table">
+                            <thead>
+                                <tr>
+                                    <th width="120">Time</th>
+                                    <th>File / Process</th>
+                                    <th width="160">Category</th>
+                                    <th width="150">Severity</th>
+                                    <th width="100">Score</th>
+                                </tr>
+                            </thead>
+                            <tbody id="alerts-table">
+                                <tr class="loading-row">
+                                    <td colspan="5">Loading alerts...</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <div class="table-footer">
+                        <span>Click any alert to view complete forensic details.</span>
+                    </div>
+                </section>
+            </div>
+
+            <!-- =======================================================
+                 PAGE 2: PROCESSES DEDICATED PAGE
+            ======================================================== -->
+            <div id="processes" class="page-view">
+
+                <section class="card process-card">
+                    <div class="card-header">
+                        <div class="header-left">
+                            <div class="section-icon">
+                                <i data-lucide="cpu"></i>
+                            </div>
+                            <div>
+                                <h3>Live Process Monitor</h3>
+                                <p>Active system processes monitored in real-time</p>
+                            </div>
+                        </div>
+                        <div class="header-right">
+                            <span class="status-live">
+                                <span class="live-dot"></span>
+                                LIVE
+                            </span>
+                        </div>
+                    </div>
+
+                    <!-- Process Summary Cards -->
+                    <div class="process-summary">
+                        <div class="summary-card">
+                            <span>Total Running Processes</span>
+                            <strong id="process-running-count">--</strong>
+                        </div>
+                        <div class="summary-card">
+                            <span>Monitor Status</span>
+                            <strong class="success">Active</strong>
+                        </div>
+                        <div class="summary-card">
+                            <span>Scan Frequency</span>
+                            <strong>2.0 Seconds</strong>
+                        </div>
+                    </div>
+
+                    <!-- Process Filter Toolbar -->
+                    <div class="page-toolbar">
+                        <div class="search-mini">
+                            <i data-lucide="search"></i>
+                            <input type="text" id="process-filter-input"
+                                placeholder="Filter processes by name or PID..." onkeyup="filterProcessList()">
+                        </div>
+                    </div>
+
+                    <!-- Process List Container -->
+                    <div id="process-list" class="process-list">
+                        <div class="loading-state">
+                            <i data-lucide="loader-circle"></i>
+                            <span>Scanning running processes...</span>
+                        </div>
+                    </div>
+                </section>
+
+            </div>
+
+            <!-- =======================================================
+                 PAGE 3: NETWORK DEDICATED PAGE
+            ======================================================== -->
+            <div id="network" class="page-view">
+
+                <section class="card network-card">
+                    <div class="card-header">
+                        <div class="header-left">
+                            <div class="section-icon">
+                                <i data-lucide="network"></i>
+                            </div>
+                            <div>
+                                <h3>Live Network Connections</h3>
+                                <p>Real-time outbound socket activity and remote IPs</p>
+                            </div>
+                        </div>
+                        <div class="header-right">
+                            <span class="status-live">
+                                <span class="live-dot"></span>
+                                LIVE
+                            </span>
+                        </div>
+                    </div>
+
+                    <!-- Network Summary Cards -->
+                    <div class="network-summary">
+                        <div class="summary-card">
+                            <span>Active Connections</span>
+                            <strong id="connection-count">--</strong>
+                        </div>
+                        <div class="summary-card">
+                            <span>Network Status</span>
+                            <strong class="success">Connected</strong>
+                        </div>
+                        <div class="summary-card">
+                            <span>Protocol Coverage</span>
+                            <strong>TCP / UDP</strong>
+                        </div>
+                    </div>
+
+                    <!-- Network Connections List Container -->
+                    <div id="network-list" class="network-list">
+                        <div class="loading-state">
+                            <i data-lucide="loader-circle"></i>
+                            <span>Monitoring network traffic...</span>
+                        </div>
+                    </div>
+                </section>
+
+            </div>
+
+            <!-- =======================================================
+                 PAGE 4: FILE SCANNER DEDICATED PAGE
+            ======================================================== -->
+            <div id="file-scanner" class="page-view">
+
+                <section class="card scanner-card">
+                    <div class="card-header">
+                        <div class="header-left">
+                            <div class="section-icon">
+                                <i data-lucide="folder-search"></i>
+                            </div>
+                            <div>
+                                <h3>File & Directory Scanner</h3>
+                                <p>Scan target folders to detect suspicious and high-risk files</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Summary Cards -->
+                    <div class="scanner-summary">
+                        <div class="summary-card">
+                            <span>🟢 Safe Files</span>
+                            <strong id="safe-count">0</strong>
+                        </div>
+                        <div class="summary-card">
+                            <span>🟡 Suspicious Files</span>
+                            <strong id="suspicious-count">0</strong>
+                        </div>
+                        <div class="summary-card">
+                            <span>🔴 Critical Files</span>
+                            <strong id="critical-count">0</strong>
+                        </div>
+                    </div>
+
+                    <!-- Folder Input Controller -->
+                    <div class="folder-control-box">
+                        <div class="input-wrapper">
+                            <i data-lucide="folder" class="input-icon"></i>
+                            <input type="text" id="folder-path"
+                                placeholder="Enter target folder path (e.g. C:\Users or /var/log)..."
+                                autocomplete="off">
+                            <div id="folder-suggestions" class="folder-suggestions"></div>
+                        </div>
+
+                        <div class="button-group">
+                            <button id="browse-folder-btn" class="refresh-btn">
+                                <i data-lucide="folder-open"></i>
+                                Browse
+                            </button>
+                            <button id="scan-folder-btn" class="refresh-btn primary">
+                                <i data-lucide="search"></i>
+                                Scan Folder
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Results Table -->
+                    <div class="table-container">
+                        <table class="alerts-table">
+                            <thead>
+                                <tr>
+                                    <th>File Name</th>
+                                    <th>Extension</th>
+                                    <th>Size</th>
+                                    <th>Risk Status</th>
+                                </tr>
+                            </thead>
+                            <tbody id="file-results">
+                                <tr>
+                                    <td colspan="4" class="empty-state-row">
+                                        No scan performed yet. Select a folder path and click "Scan Folder".
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </section>
+
+            </div>
+
+            <!-- =======================================================
+                 PAGE 5: LIVE EVENTS DEDICATED PAGE
+            ======================================================== -->
+            <div id="alerts" class="page-view">
+
+                <section class="card activity-card">
+                    <div class="card-header">
+                        <div class="header-left">
+                            <div class="section-icon">
+                                <i data-lucide="history"></i>
+                            </div>
+                            <div>
+                                <h3>Live Activity Stream</h3>
+                                <p>Real-time security event log and forensic timeline</p>
+                            </div>
+                        </div>
+                        <div class="header-right">
+                            <span class="status-live">
+                                <span class="live-dot"></span>
+                                LIVE
+                            </span>
+                        </div>
+                    </div>
+
+                    <!-- Activity Feed Container -->
+                    <div id="activity-feed" class="activity-feed">
+                        <div class="activity-item">
+                            <div class="activity-icon success">
+                                <i data-lucide="shield-check"></i>
+                            </div>
+                            <div class="activity-content">
+                                <strong>Monitoring Started</strong>
+                                <span>Waiting for incoming security telemetry events...</span>
+                            </div>
+                            <small>Just now</small>
+                        </div>
+
+                        <div class="activity-item">
+                            <div class="activity-icon primary">
+                                <i data-lucide="cpu"></i>
+                            </div>
+                            <div class="activity-content">
+                                <strong>Threat Engine Ready</strong>
+                                <span>Real-time process heuristic engine initialized.</span>
+                            </div>
+                            <small>Just now</small>
+                        </div>
+
+                        <div class="activity-item">
+                            <div class="activity-icon warning">
+                                <i data-lucide="folder-search"></i>
+                            </div>
+                            <div class="activity-content">
+                                <strong>File Monitor Active</strong>
+                                <span>Watching directory tree for modifications.</span>
+                            </div>
+                            <small>Live</small>
+                        </div>
+                    </div>
+                </section>
+
+            </div>
+
+            <!-- =======================================================
+                 PAGE 6: ANALYTICS DEDICATED PAGE
+            ======================================================== -->
+            <div id="analytics" class="page-view">
+
+                <div class="analytics-grid">
+                    <section class="card analytics-summary-card">
+                        <div class="card-header">
+                            <div class="header-left">
+                                <div class="section-icon">
+                                    <i data-lucide="chart-line"></i>
+                                </div>
+                                <div>
+                                    <h3>Threat Analytics Overview</h3>
+                                    <p>Comprehensive telemetry and historical scoring metrics</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="analytics-stats-row">
+                            <div class="stat-box">
+                                <span class="stat-label">Peak Threat Score</span>
+                                <h3 class="stat-value text-red">85</h3>
+                                <small>Highest score recorded today</small>
+                            </div>
+                            <div class="stat-box">
+                                <span class="stat-label">Average Risk Rating</span>
+                                <h3 class="stat-value text-blue">24.5</h3>
+                                <small>Mean score across processes</small>
+                            </div>
+                            <div class="stat-box">
+                                <span class="stat-label">Scanned Telemetry Events</span>
+                                <h3 class="stat-value text-green">1,420</h3>
+                                <small>Total logs processed</small>
+                            </div>
+                            <div class="stat-box">
+                                <span class="stat-label">System Uptime</span>
+                                <h3 class="stat-value text-purple">99.98%</h3>
+                                <small>Continuous monitoring</small>
+                            </div>
+                        </div>
+                    </section>
+
+                    <section class="card analytics-chart-card">
+                        <div class="card-header">
+                            <div class="header-left">
+                                <div class="section-icon">
+                                    <i data-lucide="bar-chart-3"></i>
+                                </div>
+                                <div>
+                                    <h3>Severity Distribution</h3>
+                                    <p>Historical ratio of security threat levels</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="distribution-bars">
+                            <div class="dist-row">
+                                <div class="dist-info">
+                                    <span>Low Severity</span>
+                                    <span>75%</span>
+                                </div>
+                                <div class="dist-bar">
+                                    <div class="dist-fill low" style="width: 75%;"></div>
+                                </div>
+                            </div>
+                            <div class="dist-row">
+                                <div class="dist-info">
+                                    <span>Medium Severity</span>
+                                    <span>18%</span>
+                                </div>
+                                <div class="dist-bar">
+                                    <div class="dist-fill medium" style="width: 18%;"></div>
+                                </div>
+                            </div>
+                            <div class="dist-row">
+                                <div class="dist-info">
+                                    <span>High Severity</span>
+                                    <span>5%</span>
+                                </div>
+                                <div class="dist-bar">
+                                    <div class="dist-fill high" style="width: 5%;"></div>
+                                </div>
+                            </div>
+                            <div class="dist-row">
+                                <div class="dist-info">
+                                    <span>Critical Severity</span>
+                                    <span>2%</span>
+                                </div>
+                                <div class="dist-bar">
+                                    <div class="dist-fill critical" style="width: 2%;"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </section>
+                </div>
+
+            </div>
+
+            <!-- =======================================================
+                 PAGE 7: SETTINGS DEDICATED PAGE
+            ======================================================== -->
+            <div id="settings" class="page-view">
+
+                <div class="settings-grid">
+                    <section class="card settings-card">
+                        <div class="card-header">
+                            <div class="header-left">
+                                <div class="section-icon">
+                                    <i data-lucide="sliders"></i>
+                                </div>
+                                <div>
+                                    <h3>Application Settings</h3>
+                                    <p>Configure security engine and monitoring parameters</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="settings-form">
+                            <div class="setting-group">
+                                <label for="setting-monitored-path">Monitored Directory Path</label>
+                                <input type="text" id="setting-monitored-path" class="setting-input" value="./monitored"
+                                    readonly>
+                                <small>Directory actively watched by Sentinel AI file monitor.</small>
+                            </div>
+
+                            <div class="setting-group">
+                                <label for="setting-polling-rate">Process Refresh Rate</label>
+                                <select id="setting-polling-rate" class="setting-select">
+                                    <option value="1000">1.0 Second</option>
+                                    <option value="2000" selected>2.0 Seconds (Default)</option>
+                                    <option value="5000">5.0 Seconds</option>
+                                </select>
+                            </div>
+
+                            <div class="setting-group">
+                                <label for="setting-alert-threshold">Alert Threshold Score</label>
+                                <input type="number" id="setting-alert-threshold" class="setting-input" value="50"
+                                    min="0" max="100">
+                                <small>Events exceeding this score will trigger critical alerts.</small>
+                            </div>
+
+                            <button class="save-settings-btn"
+                                onclick="showToast('Settings saved successfully!', 'success')">
+                                <i data-lucide="save"></i> Save Configuration
+                            </button>
+                        </div>
+                    </section>
+
+                    <section class="card settings-card">
+                        <div class="card-header">
+                            <div class="header-left">
+                                <div class="section-icon">
+                                    <i data-lucide="palette"></i>
+                                </div>
+                                <div>
+                                    <h3>Theme & Interface</h3>
+                                    <p>Customize dashboard appearance and animations</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="settings-form">
+                            <div class="setting-row">
+                                <div>
+                                    <strong>Dark Theme</strong>
+                                    <p>Use high-contrast dark palette for desktop UI</p>
+                                </div>
+                                <label class="switch">
+                                    <input type="checkbox" checked disabled>
+                                    <span class="slider round"></span>
+                                </label>
+                            </div>
+
+                            <div class="setting-row">
+                                <div>
+                                    <strong>Smooth Animations</strong>
+                                    <p>Enable fluid page transitions and chart animations</p>
+                                </div>
+                                <label class="switch">
+                                    <input type="checkbox" checked>
+                                    <span class="slider round"></span>
+                                </label>
+                            </div>
+
+                            <div class="setting-row">
+                                <div>
+                                    <strong>Audio Notifications</strong>
+                                    <p>Play alert chime when a critical threat is detected</p>
+                                </div>
+                                <label class="switch">
+                                    <input type="checkbox">
+                                    <span class="slider round"></span>
+                                </label>
+                            </div>
+                        </div>
+                    </section>
+                </div>
+
+            </div>
+
+        </main>
+    </div>
+
+    <!-- Toast Notifications Container -->
+    <div id="toast-container"></div>
+
+    <!-- JavaScript Scripts -->
+    <script src="{{ url_for('static', filename='js/utils.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/charts.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/processes.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/network.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/alerts.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/search.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/dashboard.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/file_scanner.js') }}"></script>
+
+    <script>
+        window.addEventListener("load", () => {
+            if (window.lucide) {
+                lucide.createIcons();
+            }
+        });
+    </script>
+</body>
+
+</html>
