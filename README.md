@@ -12,13 +12,12 @@ The main goal of this project was to build a complete monitoring application whi
 - Process monitoring
 - Network monitoring
 - File scanner with folder scanning
-- Threat detection based on custom rules
+- File status analysis (Safe, Suspicious, Critical)
 - Activity timeline
 - Analytics dashboard
 - User authentication
 - SQLite database integration
 - Responsive UI
-
 ---
 
 ## Tech Stack
